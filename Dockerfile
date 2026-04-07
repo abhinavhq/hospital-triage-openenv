@@ -11,4 +11,4 @@ RUN pip install --no-cache-dir \
 
 EXPOSE 7860
 
-CMD ["python", "baseline_inference.py", "--agent", "greedy", "--seeds", "3"]
+CMD ["python", "app.py"]
