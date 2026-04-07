@@ -1,3 +1,12 @@
+---
+title: Hospital Triage OpenEnv
+emoji: 🏥
+colorFrom: blue
+colorTo: red
+sdk: docker
+pinned: false
+---
+
 # 🏥 Hospital Triage OpenEnv
 **Meta × Scaler OpenEnv Hackathon — Round 1 Submission**
 
