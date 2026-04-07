@@ -11,4 +11,4 @@ RUN pip install --no-cache-dir \
 
 EXPOSE 7860
 
-CMD ["python", "app.py"]
+CMD ["python", "inference.pyy"]
