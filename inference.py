@@ -40,8 +40,7 @@ if __name__ == "__main__":
     result = step(0)
     print("Step OK:", result)
     s = state()
-    print("State OK:", s)import os
-import sys
+    print("State OK:", s)
 sys.path.insert(0, os.path.dirname(__file__))
 
 from env.hospital_triage_env import HospitalTriageEnv
