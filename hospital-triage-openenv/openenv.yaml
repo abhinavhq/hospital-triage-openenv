@@ -1,0 +1,88 @@
+name: hospital-triage-openenv
+version: "1.0.0"
+description: >
+  A real-world Hospital Emergency Department triage simulation.
+  An AI agent must assign patients to treatment rooms, prioritise care,
+  manage limited resources, and respond to surge events to maximise
+  patient survival and minimise deterioration/death.
+
+environment:
+  module: env.hospital_triage_env
+  class: HospitalTriageEnv
+  api:
+    - reset()
+    - step(action)
+    - state()
+
+observation_space:
+  type: dict
+  flat_vector_length: 45
+  description: >
+    Dict containing queue of patients, room status, surge/shortage
+    flags, episode stats, and a 45-float flat vector for RL agents.
+
+action_space:
+  type: discrete
+  easy_n: 5
+  medium_n: 7
+  hard_n: 8
+  actions:
+    0: "Assign patient to Room 1"
+    1: "Assign patient to Room 2"
+    2: "Assign patient to Room 3 (medium/hard)"
+    3: "Assign with PRIORITY flag (medium/hard)"
+    4: "Assign to Room 5 (hard only)"
+    5: "Send patient back to waiting"
+    6: "Discharge treated patient"
+    7: "Call specialist (hard only)"
+
+reward:
+  range: [0.0, 1.0]
+  partial_progress: true
+  structure:
+    - "+1.0 CRITICAL patient treated on time"
+    - "+0.7 HIGH patient treated on time"
+    - "+0.4 MEDIUM patient treated on time"
+    - "+0.2 LOW patient treated on time"
+    - "x0.5 if treated after max wait time"
+    - "x1.2 for correct specialist assignment"
+    - "-0.5 per patient deterioration"
+    - "-1.0 per patient death"
+    - "-0.05 to -0.30 for wrong actions"
+
+tasks:
+  - id: easy
+    class: tasks.tasks.EasyTriageTask
+    name: "Quiet Shift"
+    difficulty: easy
+    max_steps: 50
+    rooms: 2
+    max_patients: 3
+    pass_threshold: 0.4
+
+  - id: medium
+    class: tasks.tasks.MediumTriageTask
+    name: "Evening Rush"
+    difficulty: medium
+    max_steps: 100
+    rooms: 3
+    max_patients: 6
+    specialist: true
+    pass_threshold: 0.4
+
+  - id: hard
+    class: tasks.tasks.HardTriageTask
+    name: "Mass Casualty Incident"
+    difficulty: hard
+    max_steps: 200
+    rooms: 5
+    max_patients: 10
+    specialist: true
+    surges: true
+    staff_shortages: true
+    pass_threshold: 0.4
+
+deployment:
+  huggingface_space: true
+  dockerfile: Dockerfile
+  python_version: "3.10"
